@@ -1,0 +1,35 @@
+    def result2(self,theta,word,ans,phi):
+        #obs = [None for _ in range(5)]
+        #delta=phi[0] k1=phi[1]
+        state = [0,0,0]#一共有幾個 全對、只有字母對、全錯
+        obs=[None for _ in range(5)]#幾A幾B的意思
+        for i in range(5):
+            if word[i] == ans[i]:
+                theta[i, :word[i]] -= phi[0] * phi[1]
+                theta[i, word[i]+1:] -= phi[0] * phi[1]
+                theta[i,word[i]] += phi[0]*phi[1]
+                # theta[:i, word[i]] -= phi[0]*phi[1]#update
+                # theta[i+1:, word[i]] -= phi[0]*phi[1]#update
+
+                state[0]+=1
+                obs[i]=1
+            elif word[i] in ans:
+                theta[:i, word[i]] += phi[0] * phi[2]
+                theta[(i+1):, word[i]] += phi[0] * phi[2]
+
+                theta[i, word[i]] -= phi[0] * phi[3]
+                theta[i, :word[i]] += phi[0] * phi[3]#update
+                theta[i, word[i]+1:] += phi[0] * phi[3]#update
+
+                state[1] += 1
+                obs[i]=2
+            else:
+                theta[:,word[i]] -= phi[0] * phi[4]
+
+                state[2] += 1
+                obs[i]=3
+        print('--')
+        print(self.number_to_word(word))
+        print(obs)
+
+        return theta,state
